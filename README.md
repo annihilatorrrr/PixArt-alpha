@@ -37,8 +37,8 @@ Fast training diffusion models with transformers. You can find more visualizatio
 ---
 ## Breaking News 🔥🔥!!
 - (🔥 New) Nov. 30, 2023. 💥 PixArt collaborates with [LCMs](https://github.com/luosiallen/latent-consistency-model) team to make the **fastest** [Training & Inference Text-to-Image Generation System](https://github.com/PixArt-alpha/PixArt-alpha).
-Here, [Training code](train_scripts/train_pixart_lcm.py) & [Inference code](scripts/inference_lcm.py) & [Weights](https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS) & [Demo](https://huggingface.co/spaces/PixArt-alpha/PixArt-LCM) are all released, we hope users will enjoy them. Refer to [docs](asset/docs/pixart_lcm.md) for more details.
-At the same time, we update the codebase for better user experience and fix some bugs in the newest version.
+Here, [Training code](train_scripts/train_pixart_lcm.py) & [Inference code](scripts/inference_lcm.py) & [Weights](https://huggingface.co/PixArt-alpha/PixArt-LCM-XL-2-1024-MS) & [Demo](https://huggingface.co/spaces/PixArt-alpha/PixArt-LCM) are all released, we hope users will enjoy them. 
+Detailed **inference speed** and **code guidance** can be found in [docs](asset/docs/pixart_lcm.md). At the same time, we update the codebase for better user experience and fix some bugs in the newest version.
 
 ---
 ## 🚩 **New Features/Updates**
