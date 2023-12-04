@@ -95,8 +95,7 @@ class DDIMSolver:
     def ddim_step(self, pred_x0, pred_noise, timestep_index):
         alpha_cumprod_prev = extract_into_tensor(self.ddim_alpha_cumprods_prev, timestep_index, pred_x0.shape)
         dir_xt = (1.0 - alpha_cumprod_prev).sqrt() * pred_noise
-        x_prev = alpha_cumprod_prev.sqrt() * pred_x0 + dir_xt
-        return x_prev
+        return alpha_cumprod_prev.sqrt() * pred_x0 + dir_xt
 
 
 @torch.no_grad()
@@ -158,10 +157,7 @@ def train():
                 with torch.no_grad():
                     with torch.cuda.amp.autocast(enabled=config.mixed_precision == 'fp16'):
                         posterior = vae.encode(batch[0]).latent_dist
-                        if config.sample_posterior:
-                            z = posterior.sample()
-                        else:
-                            z = posterior.mode()
+                        z = posterior.sample() if config.sample_posterior else posterior.mode()
             latents = z * config.scale_factor
             y = batch[1]
             y_mask = batch[2]
@@ -244,7 +240,7 @@ def train():
             if grad_norm is not None:
                 logs.update(grad_norm=accelerator.gather(grad_norm).mean().item())
             log_buffer.update(logs)
-            if (step + 1) % config.log_interval == 0 or (step + 1) == 1:
+            if (step + 1) % config.log_interval == 0 or step == 0:
                 t = (time.time() - last_tic) / config.log_interval
                 t_d = data_time_all / config.log_interval
                 avg_time = (time.time() - time_start) / (global_step + 1)
@@ -267,9 +263,9 @@ def train():
 
             synchronize()
             torch.cuda.empty_cache()
-            if accelerator.is_main_process:
                 # log_validation(model_ema, step, model.device)
-                if ((epoch - 1) * len(train_dataloader) + step + 1) % config.save_model_steps == 0:
+            if ((epoch - 1) * len(train_dataloader) + step + 1) % config.save_model_steps == 0:
+                if accelerator.is_main_process:
                     os.umask(0o000)
                     save_checkpoint(os.path.join(config.work_dir, 'checkpoints'),
                                     epoch=epoch,
@@ -282,8 +278,8 @@ def train():
             synchronize()
 
         synchronize()
-        if accelerator.is_main_process:
-            if epoch % config.save_model_epochs == 0 or epoch == config.num_epochs:
+        if epoch % config.save_model_epochs == 0 or epoch == config.num_epochs:
+            if accelerator.is_main_process:
                 os.umask(0o000)
                 save_checkpoint(os.path.join(config.work_dir, 'checkpoints'),
                                 epoch=epoch,
@@ -306,8 +302,7 @@ def parse_args():
     parser.add_argument('--local-rank', type=int, default=-1)
     parser.add_argument('--local_rank', type=int, default=-1)
     parser.add_argument('--debug', action='store_true')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
@@ -347,10 +342,7 @@ if __name__ == '__main__':
         init_train = 'DDP'
         fsdp_plugin = None
 
-    even_batches = True
-    if config.multi_scale:
-        even_batches=False,
-
+    even_batches = (False, ) if config.multi_scale else True
     accelerator = Accelerator(
         mixed_precision=config.mixed_precision,
         gradient_accumulation_steps=config.gradient_accumulation_steps,

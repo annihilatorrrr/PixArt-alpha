@@ -160,8 +160,7 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=5e-6)
     parser.add_argument('--train_class', type=str)
     parser.add_argument('--prompt', type=str, default='a photo of sks dog')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
@@ -200,10 +199,7 @@ if __name__ == '__main__':
         init_train = 'DDP'
         fsdp_plugin = None
 
-    even_batches = True
-    if config.multi_scale:
-        even_batches=False,
-
+    even_batches = (False, ) if config.multi_scale else True
     accelerator = Accelerator(
         mixed_precision=config.mixed_precision,
         gradient_accumulation_steps=config.gradient_accumulation_steps,

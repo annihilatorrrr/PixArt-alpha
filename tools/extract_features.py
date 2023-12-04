@@ -65,8 +65,7 @@ def extract_img_vae():
         if image_name in image_names:
             continue
         image_names.add(image_name)
-    lines = list(image_names)
-    lines.sort()
+    lines = sorted(image_names)
     lines = lines[args.start_index: args.end_index]
 
     _, images_extension = os.path.splitext(lines[0])
@@ -121,7 +120,7 @@ if __name__ == '__main__':
         image_resize = 512
     else:
         raise ValueError('Multi-scale VAE feature will released soon')
-    print('Extracting Image Resolution %s' % image_resize)
+    print(f'Extracting Image Resolution {image_resize}')
 
     # prepare extracted caption t5 features for training
     extract_caption_t5()
