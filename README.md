@@ -126,8 +126,8 @@ Let us stress again how liberating it is to explore image generation so easily w
 | Hardware                    | PIXART-δ (4 steps) | SDXL LoRA LCM (4 steps) | PixArt-α (14 steps) | SDXL standard (25 steps) |
 |-----------------------------|--------------------|-------------------------|---------------------|---------------------------|
 | T4 (Google Colab Free Tier) | 3.3s               | 8.4s                    | 16.0s               | 26.5s                     |
-| A100 (80 GB)                | 0.51s              | 1.2s                    | 2.2s                | 3.8s                      |
 | V100 (32 GB)                | 0.8s               | 1.2s                    | 5.5s                | 7.7s                      |
+| A100 (80 GB)                | 0.51s              | 1.2s                    | 2.2s                | 3.8s                      |
 
 These tests were run with a batch size of 1 in all cases.
 
